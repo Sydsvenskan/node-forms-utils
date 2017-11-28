@@ -48,3 +48,42 @@ const formDefinition = {
 
 * `promisedFormHandle(form, body)` – takes a form definition and a body and handles the form through a `Promise` – resolving to `{ success: true, form }`, `{ error: true, form }` or `{ empty: true, form }`
 * `promisedFormHandles(forms, body)` – same as `promisedFormHandle`, but with multiple form definitions. If any of those definitions return `error: true`, then it will return `{ error: true, forms }`. If any forms is empty, then it will return `{ empty: true, forms }`. Else it will return `{ success: true, forms }`.
+
+## Browser JS
+
+
+### Multi Field
+
+#### Example
+
+```javascript
+var multiField = require('@hdsydsvenskan/forms-utils/browser/multi-field')({
+  dom: ourDomLib
+});
+
+multiField.init();
+```
+
+#### multiField(options)
+
+* `options.dom` – some DOM helpers
+* `[options.activateInContext(newRow)]` – if provided, then this will be called for every new row added. This enables other pieces of javascript to run on those new rows – adding eg. autocomplete functionality or other interesting things
+* `[options.dragula]` – if drag and drop capabilities are wanted, then provide a version of Dragula `3.x`
+* `[options.textRemove]` – the text to add to the remove buttons. Defaults to `Remove`.
+
+Returns an `object` with two methods: `initField(elem)` and `init([context])`.
+
+`initField(elem)` initiates the javascript for a specific multi field setup.
+
+`init([context])` initiates the javascript for aöö multi field setups within the `context` or `document`.
+
+#### DOM library
+
+The DOM library should have something close to this (our DOM library is still internal):
+
+* `$$(selector, [context])` – returns an array of DOM elements matching the selector within the `context` or `document`
+* `$(selector, [context])` – returns a single DOM element matching the selector within the `context` or `document`
+* `createChild(parent, tagName, [classNameOrProperties], [textContent])` – creates and append a new element. `classNameOrProperties` can be either a string class or an object with many properties, all which will be applied to the new element
+* `removeElement(elem)`
+* `appendChild(parent, child)`
+* `closestByClass(elem, className)` – returns the closest parent element to `elem` that handles the `className`

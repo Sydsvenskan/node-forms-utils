@@ -13,6 +13,7 @@
     "node": ">=6.0.0"
   },
   "main": "index.js",
+  "browser": "browser/index.js",
   "scripts": {
     "dependency-check": "JS_FILES=\"*.js lib/*.js\" && dependency-check . $JS_FILES && dependency-check . $JS_FILES --unused --no-dev",
     "test": "eslint --ext .js --ext .jsx . && npm run --silent dependency-check"
