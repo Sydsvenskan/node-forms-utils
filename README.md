@@ -31,7 +31,7 @@ const formDefinition = {
 
 * `.basic` – a basic field which can eg. be extended to create more complex fields
 * `.html` – a HTML field, which doesn't contain any actual form widget, but inserts a piece of HTML in its place instead (specified through a `html` property). Does not interact with any value of the field, neither gets or sets it.
-* `.multiObject` – a multi row field for creating complex forms. Repeats a sub-form for every item in an array value + allows adding new items. Needs a piece of client side JS to delete rows and to make adding new rows easier.
+* `.multiField` – a multi row field for creating complex forms. Repeats a sub-form for every item in an array value + allows adding new items. Needs a piece of client side JS to delete rows and to make adding new rows easier.
 
 ### `.widgets`
 

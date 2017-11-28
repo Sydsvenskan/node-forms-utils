@@ -3,7 +3,7 @@
 const fields = {
   basic: require('./lib/basic-field'),
   html: require('./lib/html'),
-  multiObject: require('./lib/multi-object')
+  multiField: require('./lib/multi-field')
 };
 
 const widgets = {
