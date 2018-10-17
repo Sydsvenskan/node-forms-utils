@@ -10,7 +10,7 @@
     "url": "git://github.com/sydsvenskan/node-forms-utils"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "main": "index.js",
   "browser": "browser/index.js",
