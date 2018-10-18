@@ -11,10 +11,23 @@ module.exports = function (options) {
   var removeElement = dom.removeElement;
   var appendChild = dom.appendChild;
   var closestByClass = dom.closestByClass;
+  var hasClass = dom.hasClass;
 
   var rowContainerClass = 'field__multi-row-container';
   var rowClass = 'field__multi-row';
   var buttonClass = 'field__multi-remove';
+
+  var closestByClassWithStop = function (elem, className, stop) {
+    while (elem.parentNode) {
+      elem = elem.parentNode;
+      if (elem === stop) {
+        return;
+      }
+      if (hasClass(elem, className)) {
+        return elem;
+      }
+    }
+  };
 
   var removeRow = function () {
     if (this.style.visibility !== 'hidden') {
@@ -25,7 +38,15 @@ module.exports = function (options) {
   var initField = function (fieldElem) {
     var draggable = fieldElem.dataset.draggable;
     var rowContainer = $('.' + rowContainerClass, fieldElem);
-    var rows = $$('.' + rowClass, fieldElem);
+
+    var belongsToRowContainer = function (item) {
+      return closestByClass(item, rowContainerClass) === rowContainer;
+    };
+    var filterRows = function (items) {
+      return items.filter(belongsToRowContainer);
+    };
+
+    var rows = filterRows($$('.' + rowClass, rowContainer));
     var lastRow = rows[rows.length - 1];
 
     if (!lastRow) { return; }
@@ -39,7 +60,10 @@ module.exports = function (options) {
         .addEventListener('click', removeRow);
     });
 
-    $('.' + buttonClass, lastRow).style.visibility = 'hidden';
+    var lastButton = filterRows($$('.' + buttonClass, lastRow))[0];
+    if (lastButton) {
+      lastButton.style.visibility = 'hidden';
+    }
 
     var newRow = lastRow.cloneNode(true);
     var maxIndex = rows.length - 1;
@@ -58,19 +82,21 @@ module.exports = function (options) {
       lastRow.removeEventListener('change', onChange);
       lastRow.removeEventListener('keyup', onChange);
 
-      var button = $('.' + buttonClass, lastRow);
+      var button = filterRows($$('.' + buttonClass, lastRow))[0];
 
-      button.style.visibility = '';
-      button.addEventListener('click', removeRow);
+      if (button) {
+        button.style.visibility = '';
+        button.addEventListener('click', removeRow);
+      }
 
       lastRow = newRow.cloneNode(true);
       maxIndex += 1;
 
-      $$('[name*="' + newRowIndexNamePart + '"]', lastRow).forEach(function (inputElem) {
+      filterRows($$('[name*="' + newRowIndexNamePart + '"]', lastRow)).forEach(function (inputElem) {
         inputElem.id = inputElem.id.replace(newRowIndexNamePart, '[' + maxIndex + ']');
         inputElem.name = inputElem.name.replace(newRowIndexNamePart, '[' + maxIndex + ']');
       });
-      $$('[for*="' + newRowIndexNamePart + '"]', lastRow).forEach(function (labelElem) {
+      filterRows($$('[for*="' + newRowIndexNamePart + '"]', lastRow)).forEach(function (labelElem) {
         labelElem.setAttribute('for', labelElem.getAttribute('for').replace(newRowIndexNamePart, '[' + maxIndex + ']'));
       });
       appendChild(rowContainer, lastRow);
@@ -86,15 +112,20 @@ module.exports = function (options) {
         moves: function (el/* , source, handle, sibling */) {
           return el.nextSibling;
         },
-        accepts: function (el, source, handle, sibling) {
+        accepts: function (el, target, source, sibling) {
           return sibling;
+        },
+        invalid: function (el) {
+          return !belongsToRowContainer(el);
         }
       });
     }
   };
 
   var init = function (context) {
-    $$('.field__multi', context).forEach(initField);
+    $$('.field__multi', context)
+      .filter(item => !closestByClassWithStop(item, '.field__multi', item))
+      .forEach(initField);
   };
 
   return {
