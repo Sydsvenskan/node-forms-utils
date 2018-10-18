@@ -1,5 +1,7 @@
 'use strict';
 
+var escapeStringRegexp = require('escape-string-regexp');
+
 module.exports = function (options) {
   var dom = options.dom;
   var activateInContext = options.activateInContext;
@@ -69,6 +71,24 @@ module.exports = function (options) {
     var maxIndex = rows.length - 1;
     var newRowIndexNamePart = '[' + maxIndex + ']';
 
+    // FIXME: Duplicate this entire block for "name" – this only handles "id"
+    var newRowIndexNamePrefix = $('[name*="' + newRowIndexNamePart + '"]', newRow).id;
+    var newRowIndexNamePrefixRegexp = new RegExp('^' + escapeStringRegexp(newRowIndexNamePrefix).replace(/(\\\[)\d+(\\\])/g, '$1(\\d+)$2'));
+    var newRowIndexNamePrefixParts = newRowIndexNamePrefix.split(/\[\d+\]/);
+    var constructNewRowPrefix = function (match) {
+      var length = match.length;
+      var numbers = [];
+      for (var i = 1; i < length; i++) {
+        numbers.push(match[i]);
+      }
+      var result = '';
+      var partsLength = newRowIndexNamePrefixParts.length;
+      for (var j = 0; j < partsLength; j++) {
+        result += newRowIndexNamePrefixParts[j] + (numbers[j] ? '[' + numbers[j] + ']' : '');
+      }
+      return result;
+    };
+
     var initLastRow = function () {
       lastRow.addEventListener('change', onChange);
       lastRow.addEventListener('keyup', onChange);
@@ -92,12 +112,19 @@ module.exports = function (options) {
       lastRow = newRow.cloneNode(true);
       maxIndex += 1;
 
-      filterRows($$('[name*="' + newRowIndexNamePart + '"]', lastRow)).forEach(function (inputElem) {
-        inputElem.id = inputElem.id.replace(newRowIndexNamePart, '[' + maxIndex + ']');
-        inputElem.name = inputElem.name.replace(newRowIndexNamePart, '[' + maxIndex + ']');
+      var tmpInputs = filterRows($$('.' + rowClass + ' input:not([data-exclude-from-multi-field])', rowContainer));
+      var currentNewRowIndexNamePrefix = constructNewRowPrefix(newRowIndexNamePrefixRegexp.exec(tmpInputs[tmpInputs.length - 1].id));
+
+      var oldRowName = newRowIndexNamePrefix + newRowIndexNamePart;
+      var newRowName = currentNewRowIndexNamePrefix + '[' + maxIndex + ']';
+
+      $$('[id^="' + oldRowName + '"]', lastRow).forEach(function (inputElem) {
+        inputElem.id = inputElem.id.replace(oldRowName, newRowName);
+        // FIXME: The name differs from the id, so this doesn't work!
+        inputElem.name = inputElem.name.replace(oldRowName, newRowName);
       });
-      filterRows($$('[for*="' + newRowIndexNamePart + '"]', lastRow)).forEach(function (labelElem) {
-        labelElem.setAttribute('for', labelElem.getAttribute('for').replace(newRowIndexNamePart, '[' + maxIndex + ']'));
+      $$('[for^="' + oldRowName + '"]', lastRow).forEach(function (labelElem) {
+        labelElem.setAttribute('for', labelElem.getAttribute('for').replace(oldRowName, newRowName));
       });
       appendChild(rowContainer, lastRow);
       if (activateInContext) { activateInContext(lastRow); }
