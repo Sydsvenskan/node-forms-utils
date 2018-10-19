@@ -68,6 +68,7 @@ module.exports = function (options) {
     var newRow = lastRow.cloneNode(true);
     var maxIndex = rows.length - 1;
     var newRowIndexNamePart = '[' + maxIndex + ']';
+    var newRowIndexNamePrefix = rowContainer.dataset.multiRowPrefix;
 
     var initLastRow = function () {
       lastRow.addEventListener('change', onChange);
@@ -92,12 +93,20 @@ module.exports = function (options) {
       lastRow = newRow.cloneNode(true);
       maxIndex += 1;
 
-      filterRows($$('[name*="' + newRowIndexNamePart + '"]', lastRow)).forEach(function (inputElem) {
-        inputElem.id = inputElem.id.replace(newRowIndexNamePart, '[' + maxIndex + ']');
-        inputElem.name = inputElem.name.replace(newRowIndexNamePart, '[' + maxIndex + ']');
+      var currentNewRowIndexNamePrefix = rowContainer.dataset.multiRowPrefix;
+
+      var oldRowName = newRowIndexNamePrefix + newRowIndexNamePart;
+      var newRowName = currentNewRowIndexNamePrefix + '[' + maxIndex + ']';
+
+      $$('[id^="id_' + oldRowName + '"]', lastRow).forEach(function (inputElem) {
+        inputElem.id = inputElem.id.replace(oldRowName, newRowName);
+        inputElem.name = inputElem.name.replace(oldRowName, newRowName);
       });
-      filterRows($$('[for*="' + newRowIndexNamePart + '"]', lastRow)).forEach(function (labelElem) {
-        labelElem.setAttribute('for', labelElem.getAttribute('for').replace(newRowIndexNamePart, '[' + maxIndex + ']'));
+      $$('[for^="id_' + oldRowName + '"]', lastRow).forEach(function (labelElem) {
+        labelElem.setAttribute('for', labelElem.getAttribute('for').replace(oldRowName, newRowName));
+      });
+      $$('.' + rowContainerClass, lastRow).forEach(function (childContainer) {
+        childContainer.dataset.multiRowPrefix = childContainer.dataset.multiRowPrefix.replace(oldRowName, newRowName);
       });
       appendChild(rowContainer, lastRow);
       if (activateInContext) { activateInContext(lastRow); }
