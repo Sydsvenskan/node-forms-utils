@@ -1,6 +1,6 @@
 {
   "name": "@hdsydsvenskan/forms-utils",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "license": "MIT",
   "description": "A set of useful utilities for the forms module",
   "author": "Pelle Wessman <pelle.wessman@kodfabrik.se> (http://kodfabrik.se/)",
