@@ -133,7 +133,7 @@ module.exports = function (options) {
 
   var init = function (context) {
     $$('.field__multi', context)
-      .filter(item => !closestByClassWithStop(item, '.field__multi', item))
+      .filter(function (item) { return !closestByClassWithStop(item, '.field__multi', item); })
       .forEach(initField);
   };
 
