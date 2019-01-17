@@ -23,7 +23,7 @@ module.exports = function (options) {
       if (elem === stop) {
         return;
       }
-      if (hasClass(elem, className)) {
+      if (elem.classList && hasClass(elem, className)) {
         return elem;
       }
     }
