@@ -3,7 +3,7 @@
   "version": "1.1.6",
   "license": "MIT",
   "description": "A set of useful utilities for the forms module",
-  "author": "Pelle Wessman <pelle.wessman@kodfabrik.se> (http://kodfabrik.se/)",
+  "author": "Pelle Wessman <pelle.wessman@hdsydsvenskan.se>",
   "homepage": "https://github.com/sydsvenskan/node-forms-utils",
   "repository": {
     "type": "git",
