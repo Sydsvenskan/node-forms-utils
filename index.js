@@ -5,6 +5,8 @@
 
 /** @typedef {import('./lib/promise').Form} Form */
 /** @typedef {import('./lib/promise').FormBound} FormBound */
+/** @typedef {import('./lib/promise').FormParts} FormParts */
+/** @typedef {import('./lib/promise').FormPartsBound} FormPartsBound */
 
 const fields = {
   basic: require('./lib/basic-field'),
