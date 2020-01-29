@@ -1,4 +1,10 @@
+// @ts-check
+/// <reference types="node" />
+
 'use strict';
+
+/** @typedef {import('./lib/promise').Form} Form */
+/** @typedef {import('./lib/promise').FormBound} FormBound */
 
 const fields = {
   basic: require('./lib/basic-field'),

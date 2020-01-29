@@ -16,9 +16,10 @@
   "browser": "browser/index.js",
   "scripts": {
     "dependency-check": "JS_FILES=\"*.js lib/*.js\" && dependency-check . $JS_FILES && dependency-check . $JS_FILES --unused --no-dev",
-    "test": "eslint --ext .js --ext .jsx . && npm run --silent dependency-check"
+    "test": "eslint --ext .js --ext .jsx . && npm run --silent dependency-check && tsc"
   },
   "devDependencies": {
+    "@types/node": "^10.0.0",
     "dependency-check": "^3.2.1",
     "eslint": "^5.7.0",
     "eslint-config-standard": "^12.0.0",
@@ -26,9 +27,11 @@
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "forms": "1.3.0"
+    "forms": "1.3.0",
+    "typescript": "^3.7.5"
   },
   "peerDependencies": {
     "forms": "^1.2.0"
-  }
+  },
+  "dependencies": {}
 }

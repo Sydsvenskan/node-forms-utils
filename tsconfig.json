@@ -1,0 +1,27 @@
+{
+  "files": ["index.js"],
+  "include": [
+    "browser/**/*",
+    "lib/**/*"
+  ],
+  // TODO: Separate out into its own shared repo
+  "compilerOptions": {
+    /* Basic Options */
+    "target": "ES2016",
+    "module": "commonjs",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "maxNodeModuleJsDepth": 4,
+    "jsx": "react",
+    "esModuleInterop": true,
+
+    /* Strict Type-Checking Options */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+
+    /* Additional Checks */
+    "noUnusedLocals": true
+  }
+}
