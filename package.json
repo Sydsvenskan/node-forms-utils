@@ -10,7 +10,7 @@
     "url": "git://github.com/sydsvenskan/node-forms-utils"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=12.0.0"
   },
   "main": "index.js",
   "browser": "browser/index.js",
@@ -19,7 +19,7 @@
     "test": "eslint --ext .js --ext .jsx . && npm run --silent dependency-check && tsc"
   },
   "devDependencies": {
-    "@types/node": "^10.0.0",
+    "@types/node": "^12.0.0",
     "dependency-check": "^3.2.1",
     "eslint": "^5.7.0",
     "eslint-config-standard": "^12.0.0",
