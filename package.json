@@ -19,9 +19,11 @@
     "test": "eslint --ext .js --ext .jsx . && npm run --silent dependency-check && tsc"
   },
   "devDependencies": {
+    "@hdsydsvenskan/eshu-browser-utils": "^4.5.0",
     "@hdsydsvenskan/eslint-config-hds-core": "^2.0.2",
     "@types/node": "^12.0.0",
     "dependency-check": "^4.1.0",
+    "dragula": "^3.7.2",
     "eslint": "^6.7.2",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-es": "^3.0.0",

@@ -1,5 +1,17 @@
 'use strict';
 
+/**
+ * @typedef MultiFieldOptions
+ * @property {import('@hdsydsvenskan/eshu-browser-utils/modules/dom')} dom
+ * @property {(context: any) => void} activateInContext
+ * @property {import('dragula')} dragula
+ * @property {string} [textRemove]
+ * @property {() => void} [callback]
+ */
+
+/**
+ * @param {MultiFieldOptions} options
+ */
 module.exports = options => {
   const {
     dom,
