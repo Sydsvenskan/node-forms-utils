@@ -17,7 +17,8 @@ module.exports = options => {
     dom,
     activateInContext,
     dragula,
-    textRemove
+    textRemove,
+    callback
   } = options;
 
   const {
@@ -119,22 +120,26 @@ module.exports = options => {
         inputElem.id = inputElem.id.replace(oldRowName, newRowName);
         inputElem.name = inputElem.name.replace(oldRowName, newRowName);
       });
+
       $$('[for^="id_' + oldRowName + '"]', lastRow).forEach(labelElem => {
         labelElem.setAttribute('for', labelElem.getAttribute('for').replace(oldRowName, newRowName));
       });
+
       $$('.' + rowContainerClass, lastRow).forEach(childContainer => {
         childContainer.dataset.multiRowPrefix = childContainer.dataset.multiRowPrefix.replace(oldRowName, newRowName);
       });
+
       appendChild(rowContainer, lastRow);
       if (activateInContext) { activateInContext(lastRow); }
 
+      callback && callback();
       initLastRow();
     };
 
     initLastRow();
 
     if (draggable && dragula) {
-      dragula([rowContainer], {
+      const drake = dragula([rowContainer], {
         moves: function (el/* , source, handle, sibling */) {
           return el.nextSibling;
         },
@@ -145,6 +150,8 @@ module.exports = options => {
           return !belongsToRowContainer(el);
         }
       });
+
+      drake.on('drop', () => callback && callback());
     }
   };
 
