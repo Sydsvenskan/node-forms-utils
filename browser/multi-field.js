@@ -1,23 +1,28 @@
 'use strict';
 
-module.exports = function (options) {
-  var dom = options.dom;
-  var activateInContext = options.activateInContext;
-  var dragula = options.dragula;
+module.exports = options => {
+  const {
+    dom,
+    activateInContext,
+    dragula,
+    textRemove
+  } = options;
 
-  var $$ = dom.$$;
-  var $ = dom.$;
-  var createChild = dom.createChild;
-  var removeElement = dom.removeElement;
-  var appendChild = dom.appendChild;
-  var closestByClass = dom.closestByClass;
-  var hasClass = dom.hasClass;
+  const {
+    $,
+    $$,
+    createChild,
+    removeElement,
+    appendChild,
+    closestByClass,
+    hasClass
+  } = dom;
 
-  var rowContainerClass = 'field__multi-row-container';
-  var rowClass = 'field__multi-row';
-  var buttonClass = 'field__multi-remove';
+  const rowContainerClass = 'field__multi-row-container';
+  const rowClass = 'field__multi-row';
+  const buttonClass = 'field__multi-remove';
 
-  var closestByClassWithStop = function (elem, className, stop) {
+  const closestByClassWithStop = (elem, className, stop) => {
     while (elem.parentNode) {
       elem = elem.parentNode;
       if (elem === stop) {
@@ -29,61 +34,61 @@ module.exports = function (options) {
     }
   };
 
-  var removeRow = function () {
+  const removeRow = function () {
     if (this.style.visibility !== 'hidden') {
       removeElement(closestByClass(this, rowClass));
     }
   };
 
-  var initField = function (fieldElem) {
-    var draggable = fieldElem.dataset.draggable;
-    var rowContainer = $('.' + rowContainerClass, fieldElem);
+  const initField = fieldElem => {
+    const draggable = fieldElem.dataset.draggable;
+    const rowContainer = $('.' + rowContainerClass, fieldElem);
 
-    var belongsToRowContainer = function (item) {
+    const belongsToRowContainer = item => {
       return closestByClass(item, rowContainerClass) === rowContainer;
     };
-    var filterRows = function (items) {
+    const filterRows = items => {
       return items.filter(belongsToRowContainer);
     };
 
-    var rows = filterRows($$('.' + rowClass, rowContainer));
-    var lastRow = rows[rows.length - 1];
+    const rows = filterRows($$('.' + rowClass, rowContainer));
+    let lastRow = rows[rows.length - 1];
 
     if (!lastRow) { return; }
 
-    rows.forEach(function (row) {
-      var container = createChild(row, 'div', buttonClass + '-wrapper');
+    rows.forEach(row => {
+      const container = createChild(row, 'div', buttonClass + '-wrapper');
       createChild(container, 'button', {
         type: 'button',
         class: 'btn btn-default ' + buttonClass
-      }, options.textRemove || 'Remove')
+      }, textRemove || 'Remove')
         .addEventListener('click', removeRow);
     });
 
-    var lastButton = filterRows($$('.' + buttonClass, lastRow))[0];
+    const lastButton = filterRows($$('.' + buttonClass, lastRow))[0];
     if (lastButton) {
       lastButton.style.visibility = 'hidden';
     }
 
-    var newRow = lastRow.cloneNode(true);
-    var maxIndex = rows.length - 1;
-    var newRowIndexNamePart = '[' + maxIndex + ']';
-    var newRowIndexNamePrefix = rowContainer.dataset.multiRowPrefix;
+    const newRow = lastRow.cloneNode(true);
+    let maxIndex = rows.length - 1;
+    const newRowIndexNamePart = '[' + maxIndex + ']';
+    const newRowIndexNamePrefix = rowContainer.dataset.multiRowPrefix;
 
-    var initLastRow = function () {
+    const initLastRow = () => {
       lastRow.addEventListener('change', onChange);
       lastRow.addEventListener('keyup', onChange);
     };
 
-    var onChange = function () {
-      if (!$$('input,textarea,select', lastRow).some(function (elem) { return !!elem.value && !elem.dataset.excludeFromMultiField; })) {
+    const onChange = () => {
+      if (!$$('input,textarea,select', lastRow).some(elem => !!elem.value && !elem.dataset.excludeFromMultiField)) {
         return;
       }
 
       lastRow.removeEventListener('change', onChange);
       lastRow.removeEventListener('keyup', onChange);
 
-      var button = filterRows($$('.' + buttonClass, lastRow))[0];
+      const button = filterRows($$('.' + buttonClass, lastRow))[0];
 
       if (button) {
         button.style.visibility = '';
@@ -93,19 +98,19 @@ module.exports = function (options) {
       lastRow = newRow.cloneNode(true);
       maxIndex += 1;
 
-      var currentNewRowIndexNamePrefix = rowContainer.dataset.multiRowPrefix;
+      const currentNewRowIndexNamePrefix = rowContainer.dataset.multiRowPrefix;
 
-      var oldRowName = newRowIndexNamePrefix + newRowIndexNamePart;
-      var newRowName = currentNewRowIndexNamePrefix + '[' + maxIndex + ']';
+      const oldRowName = newRowIndexNamePrefix + newRowIndexNamePart;
+      const newRowName = currentNewRowIndexNamePrefix + '[' + maxIndex + ']';
 
-      $$('[id^="id_' + oldRowName + '"]', lastRow).forEach(function (inputElem) {
+      $$('[id^="id_' + oldRowName + '"]', lastRow).forEach(inputElem => {
         inputElem.id = inputElem.id.replace(oldRowName, newRowName);
         inputElem.name = inputElem.name.replace(oldRowName, newRowName);
       });
-      $$('[for^="id_' + oldRowName + '"]', lastRow).forEach(function (labelElem) {
+      $$('[for^="id_' + oldRowName + '"]', lastRow).forEach(labelElem => {
         labelElem.setAttribute('for', labelElem.getAttribute('for').replace(oldRowName, newRowName));
       });
-      $$('.' + rowContainerClass, lastRow).forEach(function (childContainer) {
+      $$('.' + rowContainerClass, lastRow).forEach(childContainer => {
         childContainer.dataset.multiRowPrefix = childContainer.dataset.multiRowPrefix.replace(oldRowName, newRowName);
       });
       appendChild(rowContainer, lastRow);
@@ -131,9 +136,9 @@ module.exports = function (options) {
     }
   };
 
-  var init = function (context) {
+  const init = context => {
     $$('.field__multi', context)
-      .filter(function (item) { return !closestByClassWithStop(item, '.field__multi', item); })
+      .filter(item => !closestByClassWithStop(item, '.field__multi', item))
       .forEach(initField);
   };
 
