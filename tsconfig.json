@@ -12,7 +12,6 @@
     "allowJs": true,
     "resolveJsonModule": true,
     "noEmit": true,
-    "maxNodeModuleJsDepth": 4,
     "jsx": "react",
     "esModuleInterop": true,
 

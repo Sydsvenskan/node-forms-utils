@@ -1,67 +1,83 @@
+// @ts-check
+
 'use strict';
+
+import {
+  ensureHTMLElement,
+  $,
+  $$,
+  createChild,
+  appendChild,
+  closestByClass,
+  hasClass
+} from '@hdsydsvenskan/dom-utils';
 
 /**
  * @typedef MultiFieldOptions
- * @property {import('@hdsydsvenskan/eshu-browser-utils/modules/dom')} dom
  * @property {(context: any) => void} activateInContext
- * @property {import('dragula')} dragula
+ * @property {*} dragula
  * @property {string} [textRemove]
  * @property {() => void} [callback]
  */
 
+/** @typedef {(context?: import('@hdsydsvenskan/dom-utils').ElementContainer ) => void} MultiFieldInit */
+/** @typedef {(fieldElem: HTMLElement) => void} MultiFieldInitField */
+
 /**
  * @param {MultiFieldOptions} options
+ * @returns {{ init: MultiFieldInit, initField: MultiFieldInitField }}
  */
-module.exports = options => {
+export const multiField = function (options) {
   const {
-    dom,
     activateInContext,
     dragula,
     textRemove,
     callback
   } = options;
 
-  const {
-    $,
-    $$,
-    createChild,
-    removeElement,
-    appendChild,
-    closestByClass,
-    hasClass
-  } = dom;
-
   const rowContainerClass = 'field__multi-row-container';
   const rowClass = 'field__multi-row';
   const buttonClass = 'field__multi-remove';
 
+  /**
+   * @param {Node} elem
+   * @param {string} className
+   * @param {Node} stop
+   * @returns {HTMLElement|undefined}
+   */
   const closestByClassWithStop = (elem, className, stop) => {
     while (elem.parentNode) {
       elem = elem.parentNode;
       if (elem === stop) {
         return;
       }
-      if (elem.classList && hasClass(elem, className)) {
+      if (elem instanceof HTMLElement && elem.classList && hasClass(elem, className)) {
         return elem;
       }
     }
   };
 
-  const removeRow = function () {
-    if (this.style.visibility !== 'hidden') {
-      removeElement(closestByClass(this, rowClass));
-    }
-  };
-
+  /** @type {MultiFieldInitField} */
   const initField = fieldElem => {
     const draggable = fieldElem.dataset.draggable;
     const rowContainer = $('.' + rowContainerClass, fieldElem);
 
+    if (!rowContainer) return;
+
+    /**
+     * @param {Node} item
+     * @returns {boolean}
+     */
     const belongsToRowContainer = item => {
       return closestByClass(item, rowContainerClass) === rowContainer;
     };
+    /**
+     * @template {Node} T
+     * @param {T[]} items
+     * @returns {T[]}
+     */
     const filterRows = items => {
-      return items.filter(belongsToRowContainer);
+      return items.filter(item => belongsToRowContainer(item));
     };
 
     const rows = filterRows($$('.' + rowClass, rowContainer));
@@ -75,7 +91,12 @@ module.exports = options => {
         type: 'button',
         'class': 'btn btn-default ' + buttonClass
       }, textRemove || 'Remove')
-        .addEventListener('click', removeRow);
+        .addEventListener('click', function () {
+          if (this.style.visibility !== 'hidden') {
+            const closest = closestByClass(this, rowClass);
+            if (closest) closest.remove();
+          }
+        });
     });
 
     const lastButton = filterRows($$('.' + buttonClass, lastRow))[0];
@@ -94,7 +115,9 @@ module.exports = options => {
     };
 
     const onChange = () => {
-      if (!$$('input,textarea,select', lastRow).some(elem => !!elem.value && !elem.dataset.excludeFromMultiField)) {
+      if (
+        !$$('input,textarea,select', lastRow).some(elem => (elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement || elem instanceof HTMLSelectElement) && !!elem.value && !elem.dataset.excludeFromMultiField)
+      ) {
         return;
       }
 
@@ -105,10 +128,19 @@ module.exports = options => {
 
       if (button) {
         button.style.visibility = '';
-        button.addEventListener('click', removeRow);
+        button.addEventListener('click', function () {
+          if (this.style.visibility !== 'hidden') {
+            const closest = closestByClass(this, rowClass);
+            if (closest) closest.remove();
+          }
+        });
       }
 
-      lastRow = newRow.cloneNode(true);
+      const clonedRow = ensureHTMLElement(newRow.cloneNode(true));
+      // Gets rid of "undefined" amongst the types
+      if (!clonedRow) return;
+
+      lastRow = clonedRow;
       maxIndex += 1;
 
       const currentNewRowIndexNamePrefix = rowContainer.dataset.multiRowPrefix;
@@ -117,16 +149,18 @@ module.exports = options => {
       const newRowName = currentNewRowIndexNamePrefix + '[' + maxIndex + ']';
 
       $$('[id^="id_' + oldRowName + '"]', lastRow).forEach(inputElem => {
-        inputElem.id = inputElem.id.replace(oldRowName, newRowName);
-        inputElem.name = inputElem.name.replace(oldRowName, newRowName);
+        if ((inputElem instanceof HTMLInputElement || inputElem instanceof HTMLTextAreaElement || inputElem instanceof HTMLSelectElement)) {
+          inputElem.id = inputElem.id.replace(oldRowName, newRowName);
+          inputElem.name = inputElem.name.replace(oldRowName, newRowName);
+        }
       });
 
       $$('[for^="id_' + oldRowName + '"]', lastRow).forEach(labelElem => {
-        labelElem.setAttribute('for', labelElem.getAttribute('for').replace(oldRowName, newRowName));
+        labelElem.setAttribute('for', (labelElem.getAttribute('for') || '').replace(oldRowName, newRowName));
       });
 
       $$('.' + rowContainerClass, lastRow).forEach(childContainer => {
-        childContainer.dataset.multiRowPrefix = childContainer.dataset.multiRowPrefix.replace(oldRowName, newRowName);
+        childContainer.dataset.multiRowPrefix = (childContainer.dataset.multiRowPrefix || '').replace(oldRowName, newRowName);
       });
 
       appendChild(rowContainer, lastRow);
@@ -140,12 +174,15 @@ module.exports = options => {
 
     if (draggable && dragula) {
       const drake = dragula([rowContainer], {
+        // @ts-ignore
         moves: function (el/* , source, handle, sibling */) {
           return el.nextSibling;
         },
-        accepts: function (el, target, source, sibling) {
+        // @ts-ignore
+        accepts: function (_el, _target, _source, sibling) {
           return sibling;
         },
+        // @ts-ignore
         invalid: function (el) {
           return !belongsToRowContainer(el);
         }
@@ -155,6 +192,7 @@ module.exports = options => {
     }
   };
 
+  /** @type {MultiFieldInit} */
   const init = context => {
     $$('.field__multi', context)
       .filter(item => !closestByClassWithStop(item, '.field__multi', item))

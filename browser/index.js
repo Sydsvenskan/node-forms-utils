@@ -1,5 +1,7 @@
+// @ts-check
+
 'use strict';
 
-module.exports = {
-  multiField: require('./multi-field')
-};
+export {
+  multiField
+} from './multi-field';

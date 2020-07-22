@@ -19,28 +19,31 @@
     "test": "eslint --ext .js --ext .jsx . && npm run --silent dependency-check && tsc"
   },
   "devDependencies": {
-    "@hdsydsvenskan/eshu-browser-utils": "^4.5.0",
     "@hdsydsvenskan/eslint-config-hds": "20.0.3",
+    "@hdsydsvenskan/eslint-config-hds-browser": "14.0.2",
     "@hdsydsvenskan/eslint-config-hds-core": "^2.0.1",
     "@types/node": "^12.0.0",
     "dependency-check": "^4.1.0",
     "dragula": "^3.7.2",
-    "eslint": "^6.7.1",
+    "eslint": "^6.7.2",
     "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-compat": "^3.0.0",
     "eslint-plugin-es": "^3.0.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-jsdoc": "^24.0.2",
     "eslint-plugin-mocha": "^6.2.2",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-promise": "^4.0.0",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-unicorn": "^19.0.1",
     "forms": "^1.3.2",
-    "typescript": "^3.7.5"
+    "typescript": "^3.9.7"
   },
   "peerDependencies": {
     "forms": "^1.2.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@hdsydsvenskan/dom-utils": "^1.0.0"
+  }
 }
