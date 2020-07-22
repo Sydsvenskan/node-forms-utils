@@ -1,0 +1,3 @@
+allow:
+  - '@hdsydsvenskan/dom-utils'
+tsConfig: tsconfig.json

@@ -1,0 +1,11 @@
+*
+!/*.js
+!/*.d.ts
+!/browser/*.js
+!/browser/*.d.ts
+!/browser/**/*.js
+!/browser/**/*.d.ts
+!/lib/*.js
+!/lib/*.d.ts
+!/lib/**/*.js
+!/lib/**/*.d.ts

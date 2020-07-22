@@ -1,7 +1,8 @@
 # Basic ones
+/.env
+/.nyc_output
 /coverage
 /node_modules
-/.env
 
 # Please..
 .DS_Store
@@ -11,3 +12,8 @@ yarn-error.log
 # We're a library, so please, also no lock files
 /package-lock.json
 /yarn.lock
+
+# Generated types
+*.d.ts
+
+# Library specific ones
