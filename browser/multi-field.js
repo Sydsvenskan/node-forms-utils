@@ -73,7 +73,7 @@ module.exports = options => {
       const container = createChild(row, 'div', buttonClass + '-wrapper');
       createChild(container, 'button', {
         type: 'button',
-        class: 'btn btn-default ' + buttonClass
+        'class': 'btn btn-default ' + buttonClass
       }, textRemove || 'Remove')
         .addEventListener('click', removeRow);
     });
@@ -162,7 +162,7 @@ module.exports = options => {
   };
 
   return {
-    initField: initField,
-    init: init
+    initField,
+    init
   };
 };
