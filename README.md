@@ -51,22 +51,20 @@ const formDefinition = {
 
 ## Browser JS
 
-
 ### Multi Field
 
 #### Example
 
 ```javascript
-var multiField = require('@hdsydsvenskan/forms-utils/browser/multi-field')({
-  dom: ourDomLib
-});
+import { multiField } from '@hdsydsvenskan/forms-utils/browser/multi-field';
 
-multiField.init();
+const multiFieldSetup = multiFieldSetup({ dragula });
+
+multiFieldSetup.init();
 ```
 
 #### multiField(options)
 
-* `options.dom` – some DOM helpers
 * `[options.activateInContext(newRow)]` – if provided, then this will be called for every new row added. This enables other pieces of javascript to run on those new rows – adding eg. autocomplete functionality or other interesting things
 * `[options.dragula]` – if drag and drop capabilities are wanted, then provide a version of Dragula `3.x`
 * `[options.textRemove]` – the text to add to the remove buttons. Defaults to `Remove`.
@@ -77,13 +75,3 @@ Returns an `object` with two methods: `initField(elem)` and `init([context])`.
 
 `init([context])` initiates the javascript for aöö multi field setups within the `context` or `document`.
 
-#### DOM library
-
-The DOM library should have something close to this (our DOM library is still internal):
-
-* `$$(selector, [context])` – returns an array of DOM elements matching the selector within the `context` or `document`
-* `$(selector, [context])` – returns a single DOM element matching the selector within the `context` or `document`
-* `createChild(parent, tagName, [classNameOrProperties], [textContent])` – creates and append a new element. `classNameOrProperties` can be either a string class or an object with many properties, all which will be applied to the new element
-* `removeElement(elem)`
-* `appendChild(parent, child)`
-* `closestByClass(elem, className)` – returns the closest parent element to `elem` that handles the `className`
