@@ -15,7 +15,7 @@ const formDefinition = {
     label: 'Description',
     html: '<p>This is a HTML description</p>'
   }),
-  items: customFields.multiObject({
+  items: customFields.multiField({
     label: 'Items',
     rowField: {
       itemName: fields.string({ label: 'Name' }),
