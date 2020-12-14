@@ -7,7 +7,7 @@ A collection of fields, widgets and other useful utils for the [forms](https://w
 ## Usage
 
 ```javascript
-const { customFields: fields } = require('@hdsydsvenskan/forms-utils');
+const { fields: customFields } = require('@hdsydsvenskan/forms-utils');
 const { fields, widgets } = require('forms');
 
 const formDefinition = {
@@ -15,7 +15,7 @@ const formDefinition = {
     label: 'Description',
     html: '<p>This is a HTML description</p>'
   }),
-  items: customFields.multiObject({
+  items: customFields.multiField({
     label: 'Items',
     rowField: {
       itemName: fields.string({ label: 'Name' }),
